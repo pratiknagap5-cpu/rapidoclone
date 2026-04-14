@@ -91,52 +91,54 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
         title: const Text('Payment'),
         automaticallyImplyLeading: false, // Force them to pay/select
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: AppTheme.primaryYellow.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                border: Border.all(color: AppTheme.primaryYellow.withOpacity(0.5)),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryYellow.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                  border: Border.all(color: AppTheme.primaryYellow.withOpacity(0.5)),
+                ),
+                child: Column(
+                  children: [
+                    Text('Amount to Pay', style: GoogleFonts.inter(color: AppTheme.accentDark)),
+                    const SizedBox(height: 8),
+                    Text('₹${ride.fare.toStringAsFixed(0)}', 
+                      style: GoogleFonts.inter(fontSize: 36, fontWeight: FontWeight.bold, color: AppTheme.accentDark),
+                    ),
+                  ],
+                ),
               ),
-              child: Column(
-                children: [
-                  Text('Amount to Pay', style: GoogleFonts.inter(color: AppTheme.accentDark)),
-                  const SizedBox(height: 8),
-                  Text('₹${ride.fare.toStringAsFixed(0)}', 
-                    style: GoogleFonts.inter(fontSize: 36, fontWeight: FontWeight.bold, color: AppTheme.accentDark),
-                  ),
-                ],
+              const SizedBox(height: 32),
+              Text('Select Payment Method', style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w700)),
+              const SizedBox(height: 16),
+  
+              _buildPaymentOption(PaymentMethod.upi, 'UPI', 'Pay via GPay, PhonePe, Paytm', '📱'),
+              const SizedBox(height: 12),
+              _buildPaymentOption(PaymentMethod.card, 'Credit/Debit Card', 'Visa, Mastercard, RuPay', '💳'),
+              const SizedBox(height: 12),
+              _buildPaymentOption(PaymentMethod.cash, 'Cash', 'Pay captain directly', '💵'),
+  
+              const SizedBox(height: 48), // Padding instead of Spacer
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: _selectedMethod == null || _isProcessing ? null : _processPayment,
+                  style: ElevatedButton.styleFrom(backgroundColor: AppTheme.accentDark, foregroundColor: Colors.white),
+                  child: _isProcessing 
+                      ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3))
+                      : const Text('Confirm Payment'),
+                ),
               ),
-            ),
-            const SizedBox(height: 32),
-            Text('Select Payment Method', style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w700)),
-            const SizedBox(height: 16),
-
-            _buildPaymentOption(PaymentMethod.upi, 'UPI', 'Pay via GPay, PhonePe, Paytm', '📱'),
-            const SizedBox(height: 12),
-            _buildPaymentOption(PaymentMethod.card, 'Credit/Debit Card', 'Visa, Mastercard, RuPay', '💳'),
-            const SizedBox(height: 12),
-            _buildPaymentOption(PaymentMethod.cash, 'Cash', 'Pay captain directly', '💵'),
-
-            const Spacer(),
-            SizedBox(
-              width: double.infinity,
-              height: 56,
-              child: ElevatedButton(
-                onPressed: _selectedMethod == null || _isProcessing ? null : _processPayment,
-                style: ElevatedButton.styleFrom(backgroundColor: AppTheme.accentDark, foregroundColor: Colors.white),
-                child: _isProcessing 
-                    ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3))
-                    : const Text('Confirm Payment'),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

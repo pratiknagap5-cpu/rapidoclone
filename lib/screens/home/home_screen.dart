@@ -258,6 +258,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               left: 0,
               right: 0,
               child: Container(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.7, // Prevent it from taking over the whole screen
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(AppTheme.radiusXl)),
@@ -269,100 +272,113 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                   ],
                 ),
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Location Inputs
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: AppTheme.divider),
-                        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                        color: AppTheme.surface,
-                      ),
-                      child: Column(
-                        children: [
-                          _buildLocationRow(
-                            icon: Icons.circle,
-                            color: AppTheme.accentGreen,
-                            hint: 'Pickup Location',
-                            location: pickupLocation,
-                            onTap: () => _openMapPicker('pickup'),
+                padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Container(
+                          width: 40,
+                          height: 4,
+                          margin: const EdgeInsets.only(bottom: 16),
+                          decoration: BoxDecoration(
+                            color: AppTheme.divider,
+                            borderRadius: BorderRadius.circular(2),
                           ),
-                          const Divider(height: 1, indent: 48, color: AppTheme.divider),
-                          _buildLocationRow(
-                            icon: Icons.square,
-                            color: AppTheme.accentRed,
-                            hint: 'Drop Location',
-                            location: dropLocation,
-                            onTap: () => _openMapPicker('drop'),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Ride Types
-                    if (dropLocation != null) ...[
-                      Text(
-                        'Available Rides',
-                        style: GoogleFonts.inter(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: AppTheme.accentDark,
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      SizedBox(
-                        height: 90,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
+                      // Location Inputs
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: AppTheme.divider),
+                          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                          color: AppTheme.surface,
+                        ),
+                        child: Column(
                           children: [
-                            _buildRideTypeCard(RideType.bike, 'Bike', Icons.two_wheeler, selectedRideType),
-                            const SizedBox(width: 12),
-                            _buildRideTypeCard(RideType.auto, 'Auto', Icons.electric_rickshaw, selectedRideType),
-                            const SizedBox(width: 12),
-                            _buildRideTypeCard(RideType.cab, 'Cab', Icons.local_taxi, selectedRideType),
-                            const SizedBox(width: 12),
-                            _buildRideTypeCard(RideType.premiumCab, 'Premium', Icons.directions_car, selectedRideType),
+                            _buildLocationRow(
+                              icon: Icons.circle,
+                              color: AppTheme.accentGreen,
+                              hint: 'Pickup Location',
+                              location: pickupLocation,
+                              onTap: () => _openMapPicker('pickup'),
+                            ),
+                            const Divider(height: 1, indent: 48, color: AppTheme.divider),
+                            _buildLocationRow(
+                              icon: Icons.square,
+                              color: AppTheme.accentRed,
+                              hint: 'Drop Location',
+                              location: dropLocation,
+                              onTap: () => _openMapPicker('drop'),
+                            ),
                           ],
                         ),
                       ),
                       const SizedBox(height: 24),
-
-                      // Fare Estimate & Book
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+  
+                      // Ride Types
+                      if (dropLocation != null) ...[
+                        Text(
+                          'Available Rides',
+                          style: GoogleFonts.inter(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: AppTheme.accentDark,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        SizedBox(
+                          height: 90,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
                             children: [
-                              Text(
-                                'Estimated Fare',
-                                style: GoogleFonts.inter(fontSize: 12, color: AppTheme.textSecondary),
-                              ),
-                              Text(
-                                '₹${FareService.calculateFare(LocationService.calculateDistance(pickupLocation!.latitude, pickupLocation.longitude, dropLocation.latitude, dropLocation.longitude), selectedRideType).toStringAsFixed(0)}',
-                                style: GoogleFonts.inter(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w800,
-                                  color: AppTheme.accentDark,
-                                ),
-                              ),
+                              _buildRideTypeCard(RideType.bike, 'Bike', Icons.two_wheeler, selectedRideType),
+                              const SizedBox(width: 12),
+                              _buildRideTypeCard(RideType.auto, 'Auto', Icons.electric_rickshaw, selectedRideType),
+                              const SizedBox(width: 12),
+                              _buildRideTypeCard(RideType.cab, 'Cab', Icons.local_taxi, selectedRideType),
+                              const SizedBox(width: 12),
+                              _buildRideTypeCard(RideType.premiumCab, 'Premium', Icons.directions_car, selectedRideType),
                             ],
                           ),
-                          ElevatedButton(
-                            onPressed: _bookRide,
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                        ),
+                        const SizedBox(height: 24),
+  
+                        // Fare Estimate & Book
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Estimated Fare',
+                                  style: GoogleFonts.inter(fontSize: 12, color: AppTheme.textSecondary),
+                                ),
+                                Text(
+                                  '₹${FareService.calculateFare(LocationService.calculateDistance(pickupLocation!.latitude, pickupLocation.longitude, dropLocation.latitude, dropLocation.longitude), selectedRideType).toStringAsFixed(0)}',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w800,
+                                    color: AppTheme.accentDark,
+                                  ),
+                                ),
+                              ],
                             ),
-                            child: const Text('Book Now'),
-                          ),
-                        ],
-                      ),
+                            ElevatedButton(
+                              onPressed: _bookRide,
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                              ),
+                              child: const Text('Book Now'),
+                            ),
+                          ],
+                        ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
             ),
